@@ -42,11 +42,13 @@ function start() {
 
       connection.query(`SELECT * FROM products WHERE item_id="${selectedID}";`, function (err, result){
 
-        
+        console.log(result);
 
         var currentQty = result[0].stock_quantity;
 
         var remainingQty = parseInt(currentQty - selectedQty);
+
+        var total = parseInt(result[0].price * selectedQty);
 
         if (remainingQty < 0) {
             console.log("Not enough items in stock");
@@ -55,7 +57,9 @@ function start() {
             console.log("Thank you for your order!")
             connection.query(`UPDATE products SET stock_quantity = "${remainingQty}" WHERE item_id="${selectedID}";`, function (err, result){
                 if(err) throw err;
-                readProducts();
+                console.log("Your order costs " + total + " dollars!");
+                connection.end();
+                //readProducts();
             })
         }
       })
@@ -71,7 +75,7 @@ function readProducts() {
     if (err) throw err;
     // Log all results of the SELECT statement
     console.log(res);
-    connection.end();
+    //connection.end();
   });
   start();
 }
